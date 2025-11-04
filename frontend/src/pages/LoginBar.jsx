@@ -1,10 +1,9 @@
-
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "../AuthContext";
 import "../App.css";
 
 const LoginSchema = z.object({
@@ -14,14 +13,21 @@ const LoginSchema = z.object({
 
 export default function LoginBar(){
   const nav = useNavigate();
-  const { register, handleSubmit, formState:{ errors, isSubmitting } } = useForm({ resolver: zodResolver(LoginSchema)});
+  const { login } = useAuth();
+  const { register: formRegister, handleSubmit, formState:{ errors, isSubmitting } } = useForm({
+    resolver: zodResolver(LoginSchema)
+  });
   const [err, setErr] = React.useState("");
 
-const onSubmit = async (e)=>{
-  e.preventDefault();
-  try{ await login({ email, password }); nav("/home"); }
-  catch(err){ setError(err?.response?.data?.error || "Error al iniciar sesión"); }
-};
+  const submitForm = async (values) => {
+    setErr("");
+    try {
+      await login(values); // { email, password }
+      nav("/home");
+    } catch (e) {
+      setErr(e?.response?.data?.error || "Error al iniciar sesión");
+    }
+  };
 
   return (
     <div className="bar-bg flex items-center justify-center p-6">
@@ -31,21 +37,21 @@ const onSubmit = async (e)=>{
           <p className="bar-subtitle">Bienvenido de vuelta — inicia sesión para continuar</p>
         </div>
 
-        <form onSubmit={onSubmit} className="grid gap-3">
+        <form onSubmit={handleSubmit(submitForm)} className="grid gap-3">
           <div>
             <label className="bar-subtitle block mb-1">Email</label>
-            <input className="bar-input" placeholder="tucorreo@bar.cl" {...register("email")} />
+            <input className="bar-input" placeholder="tucorreo@bar.cl" {...formRegister("email")} />
             {errors.email && <p className="bar-error mt-1">{errors.email.message}</p>}
           </div>
           <div>
             <label className="bar-subtitle block mb-1">Contraseña</label>
-            <input type="password" className="bar-input" placeholder="••••••••" {...register("password")} />
+            <input type="password" className="bar-input" placeholder="••••••••" {...formRegister("password")} />
             {errors.password && <p className="bar-error mt-1">{errors.password.message}</p>}
           </div>
 
           {err && <p className="bar-error">{err}</p>}
 
-          <button disabled={isSubmitting} className="bar-btn bar-btn-primary mt-1">
+          <button type="submit" disabled={isSubmitting} className="bar-btn bar-btn-primary mt-1">
             {isSubmitting ? "Ingresando…" : "Ingresar"}
           </button>
         </form>

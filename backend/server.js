@@ -8,7 +8,8 @@ import authRoutes from "./src/routes/auth.js";
 
 dotenv.config();
 
-const app = express();
+const app = express(); // 👈 primero se crea app
+
 const PORT = process.env.PORT || 4000;
 const ORIGIN = process.env.CLIENT_ORIGIN || "http://localhost:5173";
 const MONGODB_URI = process.env.MONGODB_URI;
@@ -28,12 +29,21 @@ app.use(cookieParser());
 
 try {
   await mongoose.connect(MONGODB_URI);
-  console.log("✅ Conectado a MongoDB Atlas");
+  console.log("✅ Conectado a MongoDB");
 } catch (e) {
-  console.error("❌ Error conectando a Atlas:", e.message);
+  console.error("❌ MongoDB error:", e.message);
   process.exit(1);
 }
 
-// ...tus rutas...
+app.get("/", (req, res) => res.json({ ok: true }));
+
+// RUTAS
+app.use("/auth", authRoutes); // 👈 importante
+
+// Manejo de errores
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ error: "Internal Server Error" });
+});
 
 app.listen(PORT, () => console.log(`🚀 API http://localhost:${PORT}`));

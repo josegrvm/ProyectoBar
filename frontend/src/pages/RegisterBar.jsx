@@ -1,10 +1,9 @@
-
 import React from "react";
-import { Link } from "react-router-dom";
-import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "../AuthContext";
 import "../App.css";
 
 const RegisterSchema = z.object({
@@ -14,46 +13,55 @@ const RegisterSchema = z.object({
 });
 
 export default function RegisterBar(){
-  const { register, handleSubmit, formState:{ errors, isSubmitting }, reset } = useForm({ resolver: zodResolver(RegisterSchema) });
-  const [ok,setOk] = React.useState("");
-  const [err,setErr] = React.useState("");
+  const nav = useNavigate();
+  const { register: doRegister } = useAuth();
+  const { register: formRegister, handleSubmit, formState:{ errors, isSubmitting }, reset } = useForm({
+    resolver: zodResolver(RegisterSchema)
+  });
+  const [ok, setOk] = React.useState("");
+  const [err, setErr] = React.useState("");
 
-const onSubmit = async (e)=>{
-  e.preventDefault();
-  try{ await register({ name, email, password }); nav("/login"); }
-  catch(err){ setError(err?.response?.data?.error || "Error al registrarse"); }
-};
-
+  const submitForm = async (values) => {
+    setOk(""); setErr("");
+    try {
+      await doRegister(values); // { name, email, password }
+      setOk("Registro exitoso. Ahora inicia sesión.");
+      reset();
+      nav("/login");
+    } catch (e) {
+      setErr(e?.response?.data?.error || "Error al registrarse");
+    }
+  };
 
   return (
     <div className="bar-bg flex items-center justify-center p-6">
       <div className="bar-card w-full max-w-md p-6">
         <div className="mb-5">
-          <h1 className="bar-title text-2xl font-semibold">🍹 Únete a BarSplit</h1>
+          <h1 className="bar-title text-2xl font-semibold">🍻 Únete a BarSplit</h1>
           <p className="bar-subtitle">Crea tu cuenta para dividir la cuenta con tus amigos</p>
         </div>
 
-        <form onSubmit={onSubmit} className="grid gap-3">
+        <form onSubmit={handleSubmit(submitForm)} className="grid gap-3">
           <div>
             <label className="bar-subtitle block mb-1">Nombre</label>
-            <input className="bar-input" placeholder="Tu nombre" {...register("name")} />
+            <input className="bar-input" placeholder="Tu nombre" {...formRegister("name")} />
             {errors.name && <p className="bar-error mt-1">{errors.name.message}</p>}
           </div>
           <div>
             <label className="bar-subtitle block mb-1">Email</label>
-            <input className="bar-input" placeholder="tucorreo@bar.cl" {...register("email")} />
+            <input className="bar-input" placeholder="tucorreo@bar.cl" {...formRegister("email")} />
             {errors.email && <p className="bar-error mt-1">{errors.email.message}</p>}
           </div>
           <div>
             <label className="bar-subtitle block mb-1">Contraseña</label>
-            <input type="password" className="bar-input" placeholder="••••••••" {...register("password")} />
+            <input type="password" className="bar-input" placeholder="••••••••" {...formRegister("password")} />
             {errors.password && <p className="bar-error mt-1">{errors.password.message}</p>}
           </div>
 
-          {ok && <p className="text-emerald-300">{ok}</p>}
-          {err && <p className="bar-error">{err}</p>}
+        {ok && <p className="text-emerald-300">{ok}</p>}
+        {err && <p className="bar-error">{err}</p>}
 
-          <button disabled={isSubmitting} className="bar-btn bar-btn-primary mt-1">
+          <button type="submit" disabled={isSubmitting} className="bar-btn bar-btn-primary mt-1">
             {isSubmitting ? "Creando…" : "Crear cuenta"}
           </button>
         </form>
