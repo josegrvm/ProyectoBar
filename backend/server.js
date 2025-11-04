@@ -1,21 +1,39 @@
-import 'dotenv/config';
-import express from 'express';
-import cors from 'cors';
-import { connectDB } from './src/db.js';
-import sessionsRouter from './src/routes/sessions.routes.js';
-import participantsRouter from './src/routes/participants.routes.js';
-import itemsRouter from './src/routes/items.routes.js';
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import dotenv from "dotenv";
+import mongoose from "mongoose";
 
+import authRoutes from "./src/routes/auth.js";
+import sessionRoutes from "./src/routes/sessions.js";
+import orderRoutes from "./src/routes/orders.js";
+import paymentRoutes from "./src/routes/payments.js";
+import meRoutes from "./src/routes/me.js";
+
+dotenv.config();
 const app = express();
-app.use(express.json());
-app.use(cors({ origin: process.env.CORS_ORIGIN?.split(',') || '*' }));
-
-app.get('/api/health', (req, res) => res.json({ ok: true }));
-app.use('/api/sessions', sessionsRouter);
-app.use('/api/participants', participantsRouter);
-app.use('/api/items', itemsRouter);
-
 const PORT = process.env.PORT || 4000;
-connectDB().then(() => {
-  app.listen(PORT, () => console.log(`Backend on :${PORT}`));
+const ORIGIN = process.env.CLIENT_ORIGIN || "http://localhost:5173";
+
+app.use(cors({ origin: ORIGIN, credentials: true }));
+app.use(express.json());
+app.use(cookieParser());
+
+mongoose.connect(process.env.MONGO_URI, { dbName: "barsplit" })
+  .then(()=>console.log("MongoDB connected"))
+  .catch((e)=>console.error("MongoDB error", e.message));
+
+app.get("/", (req,res)=>res.json({ok:true}));
+
+app.use("/auth", authRoutes);
+app.use("/sessions", sessionRoutes);
+app.use("/orders", orderRoutes);
+app.use("/payments", paymentRoutes);
+app.use("/me", meRoutes);
+
+app.use((err, req, res, next)=>{
+  console.error(err);
+  res.status(500).json({error:"Internal Server Error"});
 });
+
+app.listen(PORT, ()=>console.log(`API on http://localhost:${PORT}`));
