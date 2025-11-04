@@ -470,3 +470,96 @@ display: flex;
 
 
 /* Ensured theme variables present for components created by organizer */
+
+/* ====== BAR VINTAGE: variables y fondo con madera + brillo sutil ====== */
+:root{
+  --bar-bg:#0b0f14;            /* fondo principal */
+  --bar-surface:#0f141b;       /* tarjetas/nav */
+  --bar-primary:#f59e0b;       /* dorado/ámbar */
+  --bar-secondary:#f97316;     /* naranja más vivo */
+  --bar-border:#1f2937;        /* borde sutil */
+  --bar-text:#e5e7eb;          /* texto */
+  --bar-muted:#9ca3af;         /* texto secundario */
+}
+
+/* Fondo con efecto madera + viñeta; sin imágenes externas */
+.bar-bg{
+  min-height: 100vh;
+  color: var(--bar-text);
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(255,255,255,0.06), transparent 60%),
+    radial-gradient(900px 500px at -10% 20%, rgba(255,255,255,0.04), transparent 60%),
+    /* “beta” de veta de madera con repetición muy suave */
+    repeating-linear-gradient( 8deg,
+      rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 3px,
+      rgba(0,0,0,0.02) 3px, rgba(0,0,0,0.02) 8px ),
+    linear-gradient(180deg, #0d1117 0%, #0b0f14 60%, #080b10 100%);
+}
+
+/* Tarjeta con glass sutil + borde cálido */
+.bar-card{
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+    border: 1px solid var(--bar-border);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    backdrop-filter: blur(6px);
+}
+
+/* Tipografías helper */
+.bar-title{ color: var(--bar-text); }
+.bar-subtitle{ color: var(--bar-muted); }
+
+/* Inputs */
+.bar-input{
+    width: 100%;
+    background: #0c1218;
+    border: 1px solid var(--bar-border);
+    color: var(--bar-text);
+    border-radius: 12px;
+    padding: .75rem .9rem;
+    transition: box-shadow .2s ease, border-color .2s ease, transform .12s ease;
+}
+.bar-input:focus{
+    outline: none;
+    border-color: #2a3a4e;
+    box-shadow: 0 0 0 3px rgba(148,163,184,0.15);
+}
+
+/* Botones base + primario con “glow” cálido */
+.bar-btn{
+    display: inline-flex; align-items:center; justify-content:center;
+    gap:.5rem; padding:.7rem 1rem; border-radius:12px; font-weight:600;
+    border:1px solid var(--bar-border); background: var(--bar-surface);
+    color: var(--bar-text); transition: transform .12s ease, box-shadow .2s ease, background .2s ease;
+}
+.bar-btn:hover{ transform: translateY(-1px); }
+.bar-btn:active{ transform: translateY(0); }
+
+.bar-btn-primary{
+    background: linear-gradient(180deg, var(--bar-primary), var(--bar-secondary));
+    color:#0b0f14; border: none;
+    box-shadow: 0 8px 30px rgba(245, 158, 11, .25);
+}
+.bar-btn-primary:hover{
+    box-shadow: 0 10px 36px rgba(249, 115, 22, .32);
+    filter: saturate(1.05);
+}
+
+/* Links */
+.bar-link{ color: #93c5fd; }
+.bar-link:hover{ text-decoration: underline; }
+
+/* Separador “•” */
+.bar-sep{
+    display:grid; place-items:center; color:var(--bar-muted);
+}
+.bar-sep::before{ content:"•"; opacity:.6; }
+
+/* Mensajes */
+.bar-error{ color:#fca5a5; }
+.success{ color:#86efac; }
+
+/* Respeta usuarios con “reduced motion” */
+@media (prefers-reduced-motion: reduce){
+    .bar-btn, .bar-input{ transition: none !important; }
+}
