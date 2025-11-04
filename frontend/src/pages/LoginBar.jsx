@@ -17,15 +17,11 @@ export default function LoginBar(){
   const { register, handleSubmit, formState:{ errors, isSubmitting } } = useForm({ resolver: zodResolver(LoginSchema)});
   const [err, setErr] = React.useState("");
 
-  async function onSubmit(values){
-    setErr("");
-    try{
-      await axios.post("/auth/login", values, { withCredentials:true });
-      nav("/home");
-    }catch(ex){
-      setErr(ex?.response?.data?.error || "No se pudo iniciar sesión");
-    }
-  }
+const onSubmit = async (e)=>{
+  e.preventDefault();
+  try{ await login({ email, password }); nav("/home"); }
+  catch(err){ setError(err?.response?.data?.error || "Error al iniciar sesión"); }
+};
 
   return (
     <div className="bar-bg flex items-center justify-center p-6">
@@ -35,7 +31,7 @@ export default function LoginBar(){
           <p className="bar-subtitle">Bienvenido de vuelta — inicia sesión para continuar</p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="grid gap-3">
+        <form onSubmit={onSubmit} className="grid gap-3">
           <div>
             <label className="bar-subtitle block mb-1">Email</label>
             <input className="bar-input" placeholder="tucorreo@bar.cl" {...register("email")} />

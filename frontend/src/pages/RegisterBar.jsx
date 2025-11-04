@@ -18,16 +18,12 @@ export default function RegisterBar(){
   const [ok,setOk] = React.useState("");
   const [err,setErr] = React.useState("");
 
-  async function onSubmit(values){
-    setOk(""); setErr("");
-    try{
-      await axios.post("/auth/register", values, { withCredentials:true });
-      setOk("Cuenta creada ✅ Ahora puedes iniciar sesión.");
-      reset({ name:"", email:"", password:"" });
-    }catch(ex){
-      setErr(ex?.response?.data?.error || "No se pudo crear la cuenta");
-    }
-  }
+const onSubmit = async (e)=>{
+  e.preventDefault();
+  try{ await register({ name, email, password }); nav("/login"); }
+  catch(err){ setError(err?.response?.data?.error || "Error al registrarse"); }
+};
+
 
   return (
     <div className="bar-bg flex items-center justify-center p-6">
@@ -37,7 +33,7 @@ export default function RegisterBar(){
           <p className="bar-subtitle">Crea tu cuenta para dividir la cuenta con tus amigos</p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="grid gap-3">
+        <form onSubmit={onSubmit} className="grid gap-3">
           <div>
             <label className="bar-subtitle block mb-1">Nombre</label>
             <input className="bar-input" placeholder="Tu nombre" {...register("name")} />
