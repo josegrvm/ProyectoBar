@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 
 import authRoutes from "./src/routes/auth.js";
+import mesasRoutes from "./src/routes/mesas.js";
 
 dotenv.config();
 
@@ -36,6 +37,9 @@ try {
 }
 
 app.get("/", (req, res) => res.json({ ok: true }));
+
+app.use("/auth", authRoutes);
+app.use("/mesas", mesasRoutes);
 
 // RUTAS
 app.use("/auth", authRoutes); // 👈 importante

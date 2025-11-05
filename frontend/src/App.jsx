@@ -9,6 +9,7 @@ import RegisterBar from "./pages/RegisterBar";
 import Home from "./pages/Home";
 import Mesa from "./pages/Mesa";
 import Historial from "./pages/Historial";
+import CrearMesa from "./pages/CrearMesa";
 
 export default function App(){
   return (
@@ -22,8 +23,8 @@ export default function App(){
             <Route element={<Layout/>}>
               <Route path="/" element={<Navigate to="/home" replace/>} />
               <Route path="/home" element={<Home/>} />
-              <Route path="/mesa" element={<Mesa/>} />
-              <Route path="/historial" element={<Historial/>} />
+              <Route path="/mesa/:id" element={<Mesa />} />              <Route path="/historial" element={<Historial/>} />
+              <Route path="/crear-mesa" element={<CrearMesa />} />
             </Route>
           </Route>
 

@@ -1,5 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import MotionButton from "../components/motion/MotionButton";
+import MotionCard from "../components/motion/MotionCard";
 
 export default function Home() {
   return (
@@ -7,7 +9,7 @@ export default function Home() {
       <div className="rounded-2xl p-5 bg-[var(--bar-surface)] border border-[var(--bar-border)]">
         <h2 className="text-lg font-semibold mb-2">Crear mesa</h2>
         <p className="text-[var(--bar-muted)] mb-4">Arranca una nueva mesa y comparte el código con tu grupo.</p>
-        <Link to="/mesa" className="inline-block px-4 py-2 rounded-lg bg-[var(--bar-primary)] text-white">Crear</Link>
+        <Link to="/crear-mesa"><MotionButton className="bar-btn-primary">Crear</MotionButton></Link>      
       </div>
       <div className="rounded-2xl p-5 bg-[var(--bar-surface)] border border-[var(--bar-border)]">
         <h2 className="text-lg font-semibold mb-2">Unirse con QR</h2>
